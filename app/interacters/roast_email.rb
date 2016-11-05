@@ -1,6 +1,9 @@
 class RoastEmail
   include Interactor
 
+  # Shared Variables
+  $bad_follow_ratio = -50
+
   def call
     @email = context.email
     fetch_full_contact
@@ -64,27 +67,41 @@ class RoastEmail
   end
 
   def bad_twitter_ratio
-    #stub
+    if ( @full_contact['social_profiles']['twitter'] && @full_contact['social_profiles']['twitter'][0]['followers'] -
+          @full_contact['social_profiles']['twitter'][0]['following'] < $bad_follow_ratio)
+      twitter_followers = @full_contact['social_profiles']['twitter'][0]['followers']
+      @level1_hash['low_twiiter_followers'] = "You follow: #{twitter_following} | Who follows you: #{twitter_following}, getting pretty desperate. #nobodylikesyou"
+    end
   end
 
   def pinterest
-    #stub
+    if @full_contact['social_profiles']['pinterest']
+      @level1_hash['pinterest'] = "Great Pinterest account, now you can post cooking pics to yourself and also yourself."
+    end
   end
 
   def country
-    #stub
+    if @full_contact['demographics']['location_deduced']['country']['name'] == 'Canada'
+      @level1_hash['country'] = "Where 14-year-old girls can walk home alone at 11:00pm."
+    end
   end
 
   def state
-    #stub
+    if @full_contact['demographics']['location_deduced']['state']['name'] == 'British Columbia'
+      @level1_hash['country'] = "Land of weed and hippies."
+    end
   end
 
   def city
-    #stub
+    if @full_contact['demographics']['location_deduced']['city']['name'] == 'Vancouver'
+      @level1_hash['country'] = "That city where if you own a house already, you can sell it and buy a cruise liner."
+    end
   end
 
   def google_plus
-    #stub
+        if @full_contact['social_profiles']['google_plus']
+      @level1_hash['google_plus'] = "Just shoot yourself...then post it on Google+ where no one cares."
+    end
   end
 
 end
