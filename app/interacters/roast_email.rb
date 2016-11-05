@@ -51,7 +51,7 @@ class RoastEmail
   def low_twitter_followers
     if @full_contact['social_profiles']['twitter'] && @full_contact['social_profiles']['twitter'][0]['followers'] < 200
       twitter_followers = @full_contact['social_profiles']['twitter'][0]['followers']
-      @level1_hash['low_twiiter_followers'] = "You only have #{@twitter_followers} twitter followers. No one follows you.  You suck"
+      @level1_hash['low_twiiter_followers'] = "You only have #{twitter_followers} twitter followers. No one follows you.  You suck"
     end
   end
 
