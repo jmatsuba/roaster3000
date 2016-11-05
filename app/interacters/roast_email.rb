@@ -88,13 +88,13 @@ class RoastEmail
 
   def state
     if @full_contact['demographics']['location_deduced']['state']['name'] == 'British Columbia'
-      @level1_hash['country'] = "Land of weed and hippies."
+      @level1_hash['state'] = "Land of weed and hippies."
     end
   end
 
   def city
     if @full_contact['demographics']['location_deduced']['city']['name'] == 'Vancouver'
-      @level1_hash['country'] = "That city where if you own a house already, you can sell it and buy a cruise liner."
+      @level1_hash['city'] = "That city where if you own a house already, you can sell it and buy a cruise liner."
     end
   end
 
