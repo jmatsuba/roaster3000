@@ -72,6 +72,8 @@ class RoastEmail
       level5: @level5_hash}.to_json
   end
 
+  
+
   # INDIVIDUAL JOKES LOGIC
   def myspace
     if @full_contact['social_profiles']['myspace']
@@ -128,23 +130,36 @@ class RoastEmail
   end
 
   def foursqaure
-    #stub
+    if @full_contact['social_profiles']['foursqaure']
+      @level1_hash['foursqaure'] = "Checkin at your mom's fav strip just to find out that no one cares"
+    end
   end
 
   def gravitar
-    #stub
+    if @full_contact['social_profiles']['gravitar']
+      @level1_hash['gravitar'] = "Found your gravitar pic, now everyone can find your profile pic from your shitty Wordpress site"
+    end
   end
 
   def company
     #stub
   end
 
-  def twitter_bio
-    #stub
+  def sn_bio
+    matched_sn_bio = ""
+    sn = ["facebook", "twitter", "google", "foursquare", "gravatar", "angellist", "pinterest"]
+    sn.each { |x| bio = @full_contact['social_profiles'][x]['bio'] if @full_contact['social_profiles'][x]&&@full_contact['social_profiles'][x]['bio'] }
+    
+    if website_url
+      @level1_hash['website'] = "Why does your website (#{website_url}) redirect to pornhub.com/husky-bitches?"
+    end
   end
 
   def has_website
-    #stub
+    website_url = @full_contact['contact_info']['website']
+    if website_url
+      @level1_hash['website'] = "Why does your website (#{website_url}) redirect to pornhub.com/husky-bitches?"
+    end
   end
 
   def company_position
@@ -160,7 +175,9 @@ class RoastEmail
   end
 
   def angellist
-    #stub
+    if @full_contact['angellist']
+      @level1_hash['angellist'] = "The only investing you will get your angellist site is from pedofiles.io"
+    end
   end
 
 end
