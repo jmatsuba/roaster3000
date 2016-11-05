@@ -4,6 +4,8 @@ class RoastEmail
   # Shared Variables
   BAD_FOLLOW_RATIO = -50
 
+  SN = ["facebook", "twitter", "google", "foursquare", "gravatar", "angellist", "pinterest"]
+
   def call
     @email = context.email
     fetch_full_contact
@@ -47,12 +49,13 @@ class RoastEmail
       foursqaure
       gravitar
       company
-      twitter_bio
+      # twitter_bio
       has_website
       company_position
       has_phone_number
       fav_topics
       angellist
+      sn_bio
     end
 
   end
@@ -71,8 +74,6 @@ class RoastEmail
       level4: @level4_hash,
       level5: @level5_hash}.to_json
   end
-
-  
 
   # INDIVIDUAL JOKES LOGIC
   def myspace
@@ -142,23 +143,23 @@ class RoastEmail
   end
 
   def company
-    #stub
+    
   end
 
   def sn_bio
-    matched_sn_bio = ""
-    sn = ["facebook", "twitter", "google", "foursquare", "gravatar", "angellist", "pinterest"]
-    sn.each { |x| bio = @full_contact['social_profiles'][x]['bio'] if @full_contact['social_profiles'][x]&&@full_contact['social_profiles'][x]['bio'] }
-    
-    if website_url
-      @level1_hash['website'] = "Why does your website (#{website_url}) redirect to pornhub.com/husky-bitches?"
+    bio = "I'm a wanker. I enjoy wanking."
+    SN.each do |x|
+      if @full_contact['social_profiles'][x] && @full_contact['social_profiles'][x][0]['bio']
+        bio = @full_contact['social_profiles'][x][0]['bio']
+      end
     end
+    @level1_hash['sn_bio'] = "#{bio} <cough> Loser! <cough>"
   end
 
   def has_website
     website_url = @full_contact['contact_info']['website']
     if website_url
-      @level1_hash['website'] = "Why does your website (#{website_url}) redirect to pornhub.com/husky-bitches?"
+      @level2_hash['website'] = "Why does your website (#{website_url}) redirect to pornhub.com/husky-bitches?"
     end
   end
 
