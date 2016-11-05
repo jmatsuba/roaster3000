@@ -1,7 +1,7 @@
 class RoastController < ApplicationController
   def show
     @email = params[:email]
-    result = RoastEmail.call(email: @email)
+    result = ::RoastEmail.call(email: @email)
 
     render json: result.json
   end
