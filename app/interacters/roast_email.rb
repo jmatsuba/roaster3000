@@ -2,7 +2,7 @@ class RoastEmail
   include Interactor
 
   # Shared Variables
-  $bad_follow_ratio = -50
+  BAD_FOLLOW_RATIO = -50
 
   def call
     @email = context.email
@@ -19,6 +19,9 @@ class RoastEmail
   def fetch_full_contact
     @full_contact = FullContact.person(email: @email, style: 'dictionary')
     @name = @full_contact['contact_info']['given_name'] ? @full_contact['contact_info']['given_name'] : "Loser"
+  rescue FullContact::NotFound
+    puts "fuck"
+    @name = "loser"
   end
 
   def build_jokes
@@ -28,25 +31,29 @@ class RoastEmail
     @level4_hash = {}
     @level5_hash = {}
 
-    myspace
-    low_twitter_followers
-    bad_twitter_ratio
-    pinterest
-    country
-    state
-    city
-    google_plus
-    foursqaure
-    gravitar
-    company
-    twitter_bio
-    has_website
-    company_position
-    has_phone_number
-    fav_topics
-    angellist
+    #### test methods here
 
+    # byebug
 
+    if @full_contact
+      myspace
+      low_twitter_followers
+      bad_twitter_ratio
+      pinterest
+      country
+      state
+      city
+      google_plus
+      foursqaure
+      gravitar
+      company
+      twitter_bio
+      has_website
+      company_position
+      has_phone_number
+      fav_topics
+      angellist
+    end
 
   end
 
@@ -55,7 +62,9 @@ class RoastEmail
   end
 
   def build_json
+    status = @full_contact.nil? ? "We can't find info you on, jerk" : "Ok check these out"
     {name: @name,
+      status: status,
       level1: @level1_hash,
       level2: @level2_hash,
       level3: @level3_hash,
@@ -67,6 +76,7 @@ class RoastEmail
   def myspace
     if @full_contact['social_profiles']['myspace']
       @level1_hash['myspace'] = "You have a Myspace account.  You are a wanker for having this."
+      puts 'success'
     end
   end
 
@@ -78,10 +88,12 @@ class RoastEmail
   end
 
   def bad_twitter_ratio
-    if ( @full_contact['social_profiles']['twitter'] && @full_contact['social_profiles']['twitter'][0]['followers'] -
-          @full_contact['social_profiles']['twitter'][0]['following'] < $bad_follow_ratio)
-      twitter_followers = @full_contact['social_profiles']['twitter'][0]['followers']
-      @level1_hash['low_twiiter_followers'] = "You follow: #{twitter_following} | Who follows you: #{twitter_following}, getting pretty desperate. #nobodylikesyou"
+    return if  @full_contact['social_profiles']['twitter'].nil?
+    followers = @full_contact['social_profiles']['twitter'][0]['followers']
+    following = @full_contact['social_profiles']['twitter'][0]['following']
+
+    if (followers - following) < BAD_FOLLOW_RATIO
+      @level1_hash['bad_twitter_ratio'] = "You follow: #{following} | Who follows you: #{followers}, getting pretty desperate. #nobodylikesyou"
     end
   end
 
@@ -114,7 +126,6 @@ class RoastEmail
       @level1_hash['google_plus'] = "Just shoot yourself...then post it on Google+ where no one cares."
     end
   end
-
 
   def foursqaure
     #stub
