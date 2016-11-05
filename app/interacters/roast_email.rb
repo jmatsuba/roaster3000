@@ -36,6 +36,17 @@ class RoastEmail
     state
     city
     google_plus
+    foursqaure
+    gravitar
+    company
+    twitter_bio
+    has_website
+    company_position
+    has_phone_number
+    fav_topics
+    angellist
+
+
 
   end
 
@@ -99,9 +110,46 @@ class RoastEmail
   end
 
   def google_plus
-        if @full_contact['social_profiles']['google_plus']
+    if @full_contact['social_profiles']['google_plus']
       @level1_hash['google_plus'] = "Just shoot yourself...then post it on Google+ where no one cares."
     end
+  end
+
+
+  def foursqaure
+    #stub
+  end
+
+  def gravitar
+    #stub
+  end
+
+  def company
+    #stub
+  end
+
+  def twitter_bio
+    #stub
+  end
+
+  def has_website
+    #stub
+  end
+
+  def company_position
+    #stub
+  end
+
+  def has_phone_number
+    #stub
+  end
+
+  def fav_topics
+    #stub
+  end
+
+  def angellist
+    #stub
   end
 
 end
