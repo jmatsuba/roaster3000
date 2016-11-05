@@ -19,7 +19,11 @@ class RoastEmail
   end
 
   def build_jokes
-    @jokes_hash = {}
+    @level1_hash = {}
+    @level2_hash = {}
+    @level3_hash = {}
+    @level4_hash = {}
+    @level5_hash = {}
     myspace
     low_twitter_followers
   end
@@ -29,20 +33,25 @@ class RoastEmail
   end
 
   def build_json
-    {name: @name, jokes: @jokes_hash}.to_json
+    {name: @name,
+      level1: @level1_hash,
+      level2: @level2_hash,
+      level3: @level3_hash,
+      level4: @level4_hash,
+      level5: @level5_hash}.to_json
   end
 
   # INDIVIDUAL JOKES LOGIC
   def myspace
     if @full_contact['social_profiles']['myspace']
-      @jokes_hash['myspace'] = "You have a Myspace account.  You are a wanker for having this."
+      @level1_hash['myspace'] = "You have a Myspace account.  You are a wanker for having this."
     end
   end
 
   def low_twitter_followers
     if @full_contact['social_profiles']['twitter'] && @full_contact['social_profiles']['twitter'][0]['followers'] < 200
       twitter_followers = @full_contact['social_profiles']['twitter'][0]['followers']
-      @jokes_hash['low_twiiter_followers'] = "You only have #{@twitter_followers} twitter followers. No one follows you.  You suck"
+      @level1_hash['low_twiiter_followers'] = "You only have #{@twitter_followers} twitter followers. No one follows you.  You suck"
     end
   end
 
