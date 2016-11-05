@@ -24,8 +24,16 @@ class RoastEmail
     @level3_hash = {}
     @level4_hash = {}
     @level5_hash = {}
+
     myspace
     low_twitter_followers
+    bad_twitter_ratio
+    pinterest
+    country
+    state
+    city
+    google_plus
+
   end
 
   def roast
@@ -53,6 +61,30 @@ class RoastEmail
       twitter_followers = @full_contact['social_profiles']['twitter'][0]['followers']
       @level1_hash['low_twiiter_followers'] = "You only have #{twitter_followers} twitter followers. No one follows you.  You suck"
     end
+  end
+
+  def bad_twitter_ratio
+    #stub
+  end
+
+  def pinterest
+    #stub
+  end
+
+  def country
+    #stub
+  end
+
+  def state
+    #stub
+  end
+
+  def city
+    #stub
+  end
+
+  def google_plus
+    #stub
   end
 
 end
