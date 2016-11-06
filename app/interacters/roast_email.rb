@@ -146,7 +146,7 @@ class RoastEmail
 
   def city
     return if !location_deduced?
-    if @full_contact['demographics']['location_deduced']['city']['name'] == 'Vancouver'
+    if @full_contact['demographics']['location_deduced']['city']&&@full_contact['demographics']['location_deduced']['city']['name'] == 'Vancouver'
       @level1_hash['city'] = "That city where if you own a house already, you can sell it and buy a cruise liner."
     end
   end
@@ -217,9 +217,12 @@ class RoastEmail
     end
 
     titles = [
-      { pattern: /\bdeveloper|\bDeveloper|\bdev/, joke:"HAHA you're a #{position} -- Arn't all devs socially akward... and you know.. ugly"},
-      { pattern: /\bdesigner|\bDesigner|\bDesign/, joke:"HAHA you're a #{position} -- Arn't all designers... you know.. brainless"},
-      { pattern: /\bcomedian|\bComedian|\bdev/, joke:"HAHA you're a #{position} -- Arn't all comedians socially akward... and you know.. ugly"}
+      { pattern: /\bdeveloper|\bDeveloper|\bdev|\bDev/, joke:"HAHA you're a #{position} -- Arn't all devs socially akward... and you know.. ugly"},
+      { pattern: /\bdesigner|\bDesigner|\bDesign|\bdesign/, joke:"HAHA you're a #{position} -- Arn't all designers... you know.. brainless"},
+      { pattern: /\bintern|\bIntern|\bInternship|\binternship/, joke:"HAHA you're a #{position} -- Arn't all interns... you know.. newbs"},
+      { pattern: /\bmarketing|\bMarketing/, joke:"HAHA you're a #{position} --  Arn't all marketers... agressive and manipulative??? Get away from me!"},
+      { pattern: /\bsocial|\bScocial/, joke:"HAHA you're a #{position} -- You work in social media? is that even a real job?"},
+      { pattern: /\bcomedian|\bComedian|\bcomic|\bComic/, joke:"HAHA you're a #{position} -- Your actually NOT funny..... and probably a broke entertainer."}
     ]
 
     matches = titles.select {|t| position.match(t[:pattern])}
