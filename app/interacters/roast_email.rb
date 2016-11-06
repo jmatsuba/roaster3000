@@ -8,6 +8,7 @@ class RoastEmail
 
   def call
     @email = context.email
+    @twitter = context.twitter
     fetch_full_contact
     build_jokes
     roast
@@ -19,7 +20,8 @@ class RoastEmail
 
   # HELPERS
   def fetch_full_contact
-    @full_contact = FullContact.person(email: @email, style: 'dictionary')
+    @full_contact = FullContact.person(email: @email, style: 'dictionary') if @email
+    @full_contact = FullContact.person(twitter: @twitter, style: 'dictionary') if !@email && @twitter
     @name = @full_contact['contact_info']&&@full_contact['contact_info']['given_name'] ? @full_contact['contact_info']['given_name'] : "Loser"
   rescue FullContact::NotFound
     puts "fuck"
