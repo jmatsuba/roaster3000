@@ -1,15 +1,12 @@
 class RoastController < ApplicationController
+
+
   def show
-    @email = params[:email]
-    @twitter = params[:twitter]
+    @email = params[:input] if email? params[:input]
+    @twitter = params[:input] if twitter? params[:input]
 
     result = ::RoastEmail.call(email: @email, twitter: @twitter)
-
     render status: 200, json: result.json
-
-    # respond_to do |format|
-    #   format.json { render json: result.json, head :ok }
-    # end
   end
 
   def fullcontact
@@ -17,11 +14,25 @@ class RoastController < ApplicationController
     @twitter = params[:twitter]
     if @email
       @full_contact_json = FullContact.person(email: @email, style: 'dictionary')
+      puts 'USING EMAIL!!!!!!'
     else
       @full_contact_json = FullContact.person(twitter: @twitter, style: 'dictionary')
+      puts 'USING TWITTER!!!!!!'
     end
 
     # render json: @full_contact_json, status: 200
     render status: 200, json: @full_contact_json
+  end
+
+  private
+
+  def email?(input)
+    pattern = /.+\@.+\..+/
+    input.match(pattern)
+  end
+
+  def twitter?(input)
+    pattern = /^@?(\w){1,15}$/
+    input.match(pattern)
   end
 end

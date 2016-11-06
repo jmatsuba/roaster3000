@@ -20,8 +20,13 @@ class RoastEmail
 
   # HELPERS
   def fetch_full_contact
-    @full_contact = FullContact.person(email: @email, style: 'dictionary') if @email
-    @full_contact = FullContact.person(twitter: @twitter, style: 'dictionary') if !@email && @twitter
+    if @email
+      @full_contact = FullContact.person(email: @email, style: 'dictionary') if @email
+      puts 'USING EMAIL!!!!!!' if @email
+    else
+      @full_contact = FullContact.person(twitter: @twitter, style: 'dictionary') if !@email && @twitter
+      puts 'USING TWITTER!!!!!!' if !@email && @twitter
+    end
     @name = @full_contact['contact_info']&&@full_contact['contact_info']['given_name'] ? @full_contact['contact_info']['given_name'] : "Loser"
   rescue FullContact::NotFound
     puts "fuck"
