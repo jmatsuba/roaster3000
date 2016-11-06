@@ -58,6 +58,7 @@ class RoastEmail
       fav_topics
       angellist
       urban_dictionary_def
+      urban_dictionary_tags
     end
 
   end
@@ -87,12 +88,6 @@ class RoastEmail
       parameters:{
         "txt" => text
       }
-    if response
-      {
-        sentiment: response.body['result']['sentiment'],
-        confidence: response.body['result']['confidence']
-      }.to_json
-    end
   end
 
   # INDIVIDUAL JOKES LOGIC
@@ -250,12 +245,31 @@ class RoastEmail
       }
     if response
       response.body['list'].each do |item|
-        item_sentiment = JSON.parse(check_sentiment(item['example']))
         # if ( item_sentiment['confidence'].to_i > 70 ) && item_sentiment['sentiment'] == 'negative'
-          @level1_hash['urban_dictionary_def'] = "#{item['example']}"
+          @level1_hash['urban_dictionary_def'] = item['example']
         # end
       end
     end
   end
+
+  # def urban_dictionary_tags
+  #   term_to_define = @full_contact['contact_info']['given_name']
+  #   response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=#{term_to_define}",
+  #     headers:{
+  #       "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
+  #       "Accept" => "text/plain"
+  #     }
+  #   if response
+  #     response.body['list'].each do |item|
+  #       item_sentiment = check_sentiment(item['example'])
+  #       sentiment = JSON.parse(item_sentiment.body['result']['sentiment']).to_json
+  #       confidence = JSON.parse(item_sentiment.body['result']['confidence']).to_json
+
+  #       # if ( item_sentiment['confidence'].to_i > 70 ) && item_sentiment['sentiment'] == 'negative'
+  #         @level1_hash['urban_dictionary_def'] = "C: #{confidence.to_i} S: #{sentiment} #{item['example']}"
+  #       # end
+  #     end
+  #   end
+  # end
 
 end
