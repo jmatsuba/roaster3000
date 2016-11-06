@@ -4,7 +4,7 @@ class RoastEmail
   # Shared Variables
   BAD_FOLLOW_RATIO = -50
 
-  SN = ["facebook", "twitter", "google", "foursquare", "gravatar", "angellist", "pinterest"]
+  SN = ["facebook", "twitter", "google", "foursquare", "gravatar", "angellist", "pinterest", "instagram"]
 
   def call
     @email = context.email
@@ -60,6 +60,7 @@ class RoastEmail
       sn_bio
       has_website
       company_position
+      company_position_urban_dic
       fav_topics
       angellist
       urban_dictionary_def
@@ -230,6 +231,52 @@ class RoastEmail
     return false
   end
 
+  def company_position_urban_dic
+    linked_in = @full_contact['social_profiles']['linkedin']
+    full_contact_org = @full_contact['organizations'].nil? ? nil : @full_contact['organizations'][0]
+
+    if linked_in && scrape_linked_in(linked_in[0]['url'])
+      positions = [@linked_in_title]
+    elsif full_contact_org
+      positions = @full_contact['organizations'].map {|x| x['title']}.compact
+    else
+      return
+    end
+
+    funny_matches = []
+
+    positions.each do |position|
+      tag_array = []
+      tag_ctr = 0
+      if (position = 'Software Developer')
+        tag_ctr = 3
+        position = 'Software Engineer'
+      end 
+      response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=#{position}",
+        headers:{
+          "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
+          "Accept" => "text/plain"
+        }
+      if response && ( tag_ctr < 6 ) && response.body['tags']
+        response.body['tags'].each do |item|
+            tag_array.push(item)
+            tag_ctr = ( tag_ctr + 1 )
+        end
+        if response.body && response.body['list'] && response.body['list'][0]
+          urb_desc = response.body['list'][4]['definition']
+        end
+      end
+      tag_array = tag_array.join(",")
+
+      a_joke = "#{}. These are all words we use to describe a #{position}. Websters dictionary defines #{position} as #{urb_desc}"
+
+      funny_matches << a_joke
+    end
+    # matches = titles.select {|t| position.match(t[:pattern])}
+
+    @level2_hash['company_position_urban_dic'] = funny_matches
+  end
+
 
   def company_position
     linked_in = @full_contact['social_profiles']['linkedin']
@@ -247,7 +294,9 @@ class RoastEmail
 
     positions.each do |position|
       titles = [
-        { pattern: /\bdeveloper|\bDeveloper|\bdev|\bDev/, joke:"HAHA  #{position} -- Arn't all devs socially akward... and you know.. ugly"},
+        { pattern: /\bSelf-Employed|\bSelf Employed|\bEmployed|\bemployed/, joke:"#{position} ...oh ok, that's like a job?"},
+
+        { pattern: /\bdeveloper|\bDeveloper|\bdev|\bDev/, joke:"HAHA  #{position} -- Aren't all devs socially akward... and you know.. ugly"},
         { pattern: /\bdesigner|\bDesigner|\bDesign|\bdesign/, joke:"HAHA #{position} -- Arn't all designers... you know.. brainless"},
         { pattern: /\bintern|\bIntern|\bInternship|\binternship/, joke:"HAHA #{position} -- Arn't all interns... you know.. newbs"},
         { pattern: /\bmarketing|\bMarketing/, joke:"HAHA #{position} --  Arn't all marketers... agressive and manipulative??? Get away from me!"},
