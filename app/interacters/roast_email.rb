@@ -35,6 +35,8 @@ class RoastEmail
 
     # byebug
 
+    scrape_linked_in
+
     if @full_contact
       myspace
       low_twitter_followers
@@ -47,7 +49,7 @@ class RoastEmail
       foursqaure
       gravitar
       company
-      twitter_bio
+      # twitter_bio
       has_website
       company_position
       has_phone_number
@@ -72,7 +74,7 @@ class RoastEmail
       level5: @level5_hash}.to_json
   end
 
-  
+
 
   # INDIVIDUAL JOKES LOGIC
   def myspace
@@ -105,19 +107,26 @@ class RoastEmail
     end
   end
 
+  def location_deduced?
+    @full_contact['demographics']&&@full_contact['demographics']['location_deduced']
+  end
+
   def country
-    if @full_contact['demographics']['location_deduced']['country']['name'] == 'Canada'
+    return if !location_deduced?
+    if @full_contact['demographics']['location_deduced']['country']&&@full_contact['demographics']['location_deduced']['country']['name'] == 'Canada'
       @level1_hash['country'] = "Where 14-year-old girls can walk home alone at 11:00pm."
     end
   end
 
   def state
+    return if !location_deduced?
     if @full_contact['demographics']['location_deduced']['state']['name'] == 'British Columbia'
       @level1_hash['state'] = "Land of weed and hippies."
     end
   end
 
   def city
+    return if !location_deduced?
     if @full_contact['demographics']['location_deduced']['city']['name'] == 'Vancouver'
       @level1_hash['city'] = "That city where if you own a house already, you can sell it and buy a cruise liner."
     end
@@ -149,7 +158,7 @@ class RoastEmail
     matched_sn_bio = ""
     sn = ["facebook", "twitter", "google", "foursquare", "gravatar", "angellist", "pinterest"]
     sn.each { |x| bio = @full_contact['social_profiles'][x]['bio'] if @full_contact['social_profiles'][x]&&@full_contact['social_profiles'][x]['bio'] }
-    
+
     if website_url
       @level1_hash['website'] = "Why does your website (#{website_url}) redirect to pornhub.com/husky-bitches?"
     end
@@ -162,8 +171,42 @@ class RoastEmail
     end
   end
 
+  def scrape_linked_in
+    url = 'https://www.linkedin.com/in/lauren-achtem-a085a6105'
+    agent ||= Mechanize.new
+    agent.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36'
+    agent.set_proxy("47.90.9.74:80","http")
+    byebug
+    page = agent.get(url)
+
+    doc = Nokogiri::HTML(page.parser.to_s.force_encoding("UTF-8"))
+    @linked_in_title = doc.css(".item-title")[0].text
+    @linked_in_company = doc.css(".item-subtitle")[0].text
+  end
+
+
   def company_position
-    #stub
+    linked_in = @full_contact['social_profiles']['linkedin']
+    full_contact_org = @full_contact['organizations'].nil? ? nil : @full_contact['organizations'][0]
+
+    if linked_in
+      scrape_linked_in
+      position = linked_in_title
+    elsif full_contact_org
+      position = @full_contact['organizations'][0]['title']
+    else
+      return
+    end
+
+    titles = [
+      { pattern: /\bdeveloper|\bDeveloper|\bdev/, joke:"HAHA you're a #{position} -- Arn't all devs socially akward... and you know.. ugly"},
+      { pattern: /\bdesigner|\bDesigner|\bdev/, joke:"HAHA you're a #{position} -- Arn't all designers socially akward... and you know.. ugly"},
+      { pattern: /\bcomedian|\bComedian|\bdev/, joke:"HAHA you're a #{position} -- Arn't all comedians socially akward... and you know.. ugly"}
+    ]
+
+    matches = titles.select {|t| position.match(t[:pattern])}
+
+    @level2_hash['company_position'] = matches[0][:joke] if matches.size > 0
   end
 
   def has_phone_number
