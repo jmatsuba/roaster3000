@@ -20,7 +20,7 @@ class RoastEmail
   # HELPERS
   def fetch_full_contact
     @full_contact = FullContact.person(email: @email, style: 'dictionary')
-    @name = @full_contact['contact_info']['given_name'] ? @full_contact['contact_info']['given_name'] : "Loser"
+    @name = @full_contact['contact_info']&&@full_contact['contact_info']['given_name'] ? @full_contact['contact_info']['given_name'] : "Loser"
   rescue FullContact::NotFound
     puts "fuck"
     @name = "loser"
@@ -116,7 +116,7 @@ class RoastEmail
   def profile_pics
     photo_array = []
     SN.each do |x|
-      if @full_contact['photos'][x]
+      if @full_contact['photos']&&@full_contact['photos'][x]
         photo_array.push(@full_contact['photos'][x])
       end
     end
