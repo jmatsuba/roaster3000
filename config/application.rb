@@ -13,3 +13,7 @@ module Roast3000
     # -- all .rb files in that directory are automatically loaded.
   end
 end
+
+config.action_dispatch.default_headers = {
+    'Access-Control-Allow-Origin' => '*'
+  }
