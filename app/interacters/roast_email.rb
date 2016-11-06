@@ -197,9 +197,6 @@ class RoastEmail
     end
   end
 
-  def company
-
-  end
 
   def sn_bio
     bio = "I'm a wanker. I enjoy wanking."
@@ -244,7 +241,7 @@ class RoastEmail
       return
     end
 
-    full_matches = []
+    funny_matches = []
 
     positions.each do |position|
       titles = [
@@ -252,19 +249,44 @@ class RoastEmail
         { pattern: /\bdesigner|\bDesigner|\bDesign|\bdesign/, joke:"HAHA #{position} -- Arn't all designers... you know.. brainless"},
         { pattern: /\bintern|\bIntern|\bInternship|\binternship/, joke:"HAHA #{position} -- Arn't all interns... you know.. newbs"},
         { pattern: /\bmarketing|\bMarketing/, joke:"HAHA #{position} --  Arn't all marketers... agressive and manipulative??? Get away from me!"},
-        { pattern: /\bsocial|\bScocial/, joke:"HAHA #{position} -- You work in social media? is that even a real job?"},
+        { pattern: /\bsocial|\bSocial/, joke:"HAHA #{position} -- You work in social media? is that even a real job?"},
         { pattern: /\bcomedian|\bComedian|\bcomic|\bComic/, joke:"HAHA #{position} -- Your actually NOT funny..... and probably a broke entertainer."}
       ]
       matches = titles.select {|t| position.match(t[:pattern])}
-      full_matches << matches[0] if matches[0]
+      funny_matches << matches[0] if matches[0]
     end
     # matches = titles.select {|t| position.match(t[:pattern])}
 
-    @level2_hash['company_position'] = full_matches[0][:joke] if full_matches.size > 0
+    @level2_hash['company_position'] = funny_matches[0][:joke] if funny_matches.size > 0
   end
 
-  def has_phone_number
-    #stub
+  def company
+    linked_in = @full_contact['social_profiles']['linkedin']
+    full_contact_org = @full_contact['organizations'].nil? ? nil : @full_contact['organizations'][0]
+
+    if linked_in && scrape_linked_in(linked_in[0]['url'])
+      companies = [@linked_in_title]
+    elsif full_contact_org
+      companies = @full_contact['organizations'].map {|x| x['name']}.compact
+    else
+      return
+    end
+
+    funny_matches = []
+
+    companies.each do |company|
+      titles = [
+        ##JODY Finish this fucking section
+        { pattern: /\blighthouse|\bLighthouse/, joke:"#{company} -- Whats your qwerky fact?"},
+        { pattern: /\blater|\bLater/, joke:"HAHA #{company} -- Soon to be made obsolute by the Hootsuite Army"},
+        { pattern: /\bSAP|\bsap/, joke:"HAHA you worked for #{company} -- sooo your punch clocking dweeb"}
+      ]
+      matches = titles.select {|t| company.match(t[:pattern])}
+      funny_matches << matches[0] if matches[0]
+    end
+    # matches = titles.select {|t| position.match(t[:pattern])}
+
+    @level2_hash['company'] = funny_matches[0][:joke] if funny_matches.size > 0
   end
 
   def fav_topics
