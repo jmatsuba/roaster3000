@@ -21,7 +21,9 @@ class RoastEmail
   # HELPERS
   def fetch_full_contact
     if @email
+      byebug
       @full_contact = FullContact.person(email: @email, style: 'dictionary') if @email
+
       puts 'USING EMAIL!!!!!!' if @email
     else
       @full_contact = FullContact.person(twitter: @twitter, style: 'dictionary') if !@email && @twitter
