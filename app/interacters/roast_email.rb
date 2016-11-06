@@ -49,13 +49,13 @@ class RoastEmail
       foursqaure
       gravitar
       company
-      # twitter_bio
+      sn_bio
       has_website
       company_position
       has_phone_number
       fav_topics
       angellist
-      sn_bio
+      urban_dictionary_desc
     end
 
   end
@@ -74,6 +74,19 @@ class RoastEmail
       level4: @level4_hash,
       level5: @level5_hash}.to_json
   end
+
+  def check_sentiment(text)
+    response = Unirest.post "https://community-sentiment.p.mashape.com/text/",
+      headers:{
+        "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
+        "Content-Type" => "application/x-www-form-urlencoded",
+        "Accept" => "application/json"
+      },
+      parameters:{
+        "txt" => text
+      }
+  end
+
 
   # INDIVIDUAL JOKES LOGIC
   def myspace
@@ -178,6 +191,24 @@ class RoastEmail
   def angellist
     if @full_contact['angellist']
       @level1_hash['angellist'] = "The only investing you will get your angellist site is from pedofiles.io"
+    end
+  end
+
+  def urban_dictionary_desc
+    response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=Vancouver",
+      headers:{
+        "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
+        "Accept" => "text/plain"
+      }
+    if response
+      byebug
+
+      response.list.each do |item|
+        item_sentiment = check_sentiment(item.description)
+        if check_sentiment(response).confidence > 70 && check_sentiment(response).sentiment == 'negative'
+          @level2_hash['urban_dictionary_desc'] = "Negative: #{check_sentiment(response).sentiment}, confidence: #{check_sentiment(response).confidence} #{response}"
+        end
+      end
     end
   end
 
