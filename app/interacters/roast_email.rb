@@ -58,7 +58,6 @@ class RoastEmail
       fav_topics
       angellist
       urban_dictionary_def
-      urban_dictionary_tags
     end
 
   end
@@ -204,25 +203,30 @@ class RoastEmail
     full_contact_org = @full_contact['organizations'].nil? ? nil : @full_contact['organizations'][0]
 
     if linked_in && scrape_linked_in(linked_in[0]['url'])
-      position = @linked_in_title
+      positions = [@linked_in_title]
     elsif full_contact_org
-      position = @full_contact['organizations'][0]['title']
+      positions = @full_contact['organizations'].map {|x| x['title']}.compact
     else
       return
     end
 
-    titles = [
-      { pattern: /\bdeveloper|\bDeveloper|\bdev|\bDev/, joke:"HAHA you're a #{position} -- Arn't all devs socially akward... and you know.. ugly"},
-      { pattern: /\bdesigner|\bDesigner|\bDesign|\bdesign/, joke:"HAHA you're a #{position} -- Arn't all designers... you know.. brainless"},
-      { pattern: /\bintern|\bIntern|\bInternship|\binternship/, joke:"HAHA you're a #{position} -- Arn't all interns... you know.. newbs"},
-      { pattern: /\bmarketing|\bMarketing/, joke:"HAHA you're a #{position} --  Arn't all marketers... agressive and manipulative??? Get away from me!"},
-      { pattern: /\bsocial|\bScocial/, joke:"HAHA you're a #{position} -- You work in social media? is that even a real job?"},
-      { pattern: /\bcomedian|\bComedian|\bcomic|\bComic/, joke:"HAHA you're a #{position} -- Your actually NOT funny..... and probably a broke entertainer."}
-    ]
+    full_matches = []
 
-    matches = titles.select {|t| position.match(t[:pattern])}
+    positions.each do |position|
+      titles = [
+        { pattern: /\bdeveloper|\bDeveloper|\bdev|\bDev/, joke:"HAHA  #{position} -- Arn't all devs socially akward... and you know.. ugly"},
+        { pattern: /\bdesigner|\bDesigner|\bDesign|\bdesign/, joke:"HAHA #{position} -- Arn't all designers... you know.. brainless"},
+        { pattern: /\bintern|\bIntern|\bInternship|\binternship/, joke:"HAHA #{position} -- Arn't all interns... you know.. newbs"},
+        { pattern: /\bmarketing|\bMarketing/, joke:"HAHA #{position} --  Arn't all marketers... agressive and manipulative??? Get away from me!"},
+        { pattern: /\bsocial|\bScocial/, joke:"HAHA #{position} -- You work in social media? is that even a real job?"},
+        { pattern: /\bcomedian|\bComedian|\bcomic|\bComic/, joke:"HAHA #{position} -- Your actually NOT funny..... and probably a broke entertainer."}
+      ]
+      matches = titles.select {|t| position.match(t[:pattern])}
+      full_matches << matches[0] if matches[0]
+    end
+    # matches = titles.select {|t| position.match(t[:pattern])}
 
-    @level2_hash['company_position'] = matches[0][:joke] if matches.size > 0
+    @level2_hash['company_position'] = full_matches[0][:joke] if full_matches.size > 0
   end
 
   def has_phone_number
