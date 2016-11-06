@@ -10,6 +10,7 @@ class RoastController < ApplicationController
     @email = params[:email]
     @full_contact_json = FullContact.person(email: @email, style: 'dictionary')
 
-    render json: @full_contact_json
+    # render json: @full_contact_json, status: 200
+    render status: 200, json: @full_contact_json
   end
 end
