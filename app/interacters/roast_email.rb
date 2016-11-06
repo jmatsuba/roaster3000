@@ -27,6 +27,7 @@ class RoastEmail
   end
 
   def build_jokes
+    @generic_info_hash = {}
     @level1_hash = {}
     @level2_hash = {}
     @level3_hash = {}
@@ -39,6 +40,9 @@ class RoastEmail
 
 
     if @full_contact
+      full_name
+      given_name
+      family_name
       myspace
       low_twitter_followers
       bad_twitter_ratio
@@ -51,10 +55,8 @@ class RoastEmail
       gravitar
       company
       sn_bio
-      # twitter_bio
       has_website
       company_position
-      has_phone_number
       fav_topics
       angellist
       urban_dictionary_def
@@ -70,6 +72,7 @@ class RoastEmail
     status = @full_contact.nil? ? "We can't find info you on, jerk" : "Ok check these out"
     {name: @name,
       status: status,
+      generic_info: @generic_info_hash,
       level1: @level1_hash,
       level2: @level2_hash,
       level3: @level3_hash,
@@ -87,6 +90,26 @@ class RoastEmail
       parameters:{
         "txt" => text
       }
+  end
+
+  # GENERIC INFO
+
+  def full_name
+    if @full_contact['contact_info']['full_name']
+      @generic_info_hash['full_name'] = @full_contact['contact_info']['full_name']
+    end
+  end
+
+  def given_name
+    if @full_contact['contact_info']['given_name']
+      @generic_info_hash['given_name'] = @full_contact['contact_info']['given_name']
+    end
+  end
+
+  def family_name
+    if @full_contact['contact_info']['family_name']
+      @generic_info_hash['family_name'] = @full_contact['contact_info']['family_name']
+    end
   end
 
   # INDIVIDUAL JOKES LOGIC
