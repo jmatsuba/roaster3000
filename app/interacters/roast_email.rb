@@ -43,6 +43,7 @@ class RoastEmail
       full_name
       given_name
       family_name
+      profile_pics
       myspace
       low_twitter_followers
       bad_twitter_ratio
@@ -110,6 +111,16 @@ class RoastEmail
     if @full_contact['contact_info']['family_name']
       @generic_info_hash['family_name'] = @full_contact['contact_info']['family_name']
     end
+  end
+
+  def profile_pics
+    photo_array = []
+    SN.each do |x|
+      if @full_contact['photos'][x]
+        photo_array.push(@full_contact['photos'][x])
+      end
+    end
+    @generic_info_hash['photos'] = photo_array
   end
 
   # INDIVIDUAL JOKES LOGIC
