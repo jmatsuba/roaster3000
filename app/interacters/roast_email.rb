@@ -256,7 +256,7 @@ class RoastEmail
       if (position = 'Software Developer')
         tag_ctr = 3
         position = 'Software Engineer'
-      end 
+      end
       response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=#{position}",
         headers:{
           "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
@@ -279,7 +279,7 @@ class RoastEmail
     end
     # matches = titles.select {|t| position.match(t[:pattern])}
 
-    @level2_hash['company_position_urban_dic'] = funny_matches
+    @level2_hash['company_position_urban_dic'] = funny_matches[0] if funny_matches.length > 0
   end
 
 
