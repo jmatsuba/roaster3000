@@ -233,7 +233,7 @@ class RoastEmail
     linked_in = @full_contact['social_profiles']['linkedin']
     full_contact_org = @full_contact['organizations'].nil? ? nil : @full_contact['organizations'][0]
 
-    if linked_in && @linked_in_title
+    if linked_in && scrape_linked_in(linked_in[0]['url'])
       positions = [@linked_in_title]
     elsif full_contact_org
       positions = @full_contact['organizations'].map {|x| x['title']}.compact
