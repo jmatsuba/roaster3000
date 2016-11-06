@@ -252,6 +252,10 @@ class RoastEmail
       }
     if response
       response.body['list'].each do |item|
+        # item_sentiment = check_sentiment(item['example'])
+        # sentiment = item_sentiment.body['result']['sentiment']
+        # confidence = item_sentiment.body['result']['confidence']
+
         # if ( item_sentiment['confidence'].to_i > 70 ) && item_sentiment['sentiment'] == 'negative'
           @level1_hash['urban_dictionary_def'] = item['example']
         # end
@@ -259,24 +263,26 @@ class RoastEmail
     end
   end
 
-  # def urban_dictionary_tags
-  #   term_to_define = @full_contact['contact_info']['given_name']
-  #   response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=#{term_to_define}",
-  #     headers:{
-  #       "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
-  #       "Accept" => "text/plain"
-  #     }
-  #   if response
-  #     response.body['list'].each do |item|
-  #       item_sentiment = check_sentiment(item['example'])
-  #       sentiment = JSON.parse(item_sentiment.body['result']['sentiment']).to_json
-  #       confidence = JSON.parse(item_sentiment.body['result']['confidence']).to_json
+  def urban_dictionary_tags
+    tag_array = []
+    term_to_define = @full_contact['contact_info']['given_name']
+    response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=#{term_to_define}",
+      headers:{
+        "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
+        "Accept" => "text/plain"
+      }
+    if response
+      response.body['tags'].each do |item|
+        # item_sentiment = check_sentiment(item)
+        # sentiment = item['sentiment']
+        # confidence = item['confidence']
 
-  #       # if ( item_sentiment['confidence'].to_i > 70 ) && item_sentiment['sentiment'] == 'negative'
-  #         @level1_hash['urban_dictionary_def'] = "C: #{confidence.to_i} S: #{sentiment} #{item['example']}"
-  #       # end
-  #     end
-  #   end
-  # end
+        # if ( item_sentiment['confidence'].to_i > 70 ) && item_sentiment['sentiment'] == 'negative'
+          tag_array.push(item)
+          @level1_hash['urban_dictionary_tags'] = tag_array
+        # end
+      end
+    end
+  end
 
 end
