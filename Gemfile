@@ -34,6 +34,8 @@ gem "fullcontact"
 gem 'rb-readline'
 gem "interactor-rails", "~> 2.0"
 gem "unirest"
+gem 'mechanize'
+gem 'nokogiri'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
