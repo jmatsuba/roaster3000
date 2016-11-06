@@ -27,11 +27,13 @@ class RoastController < ApplicationController
   private
 
   def email?(input)
+    return if input.nil?
     pattern = /.+\@.+\..+/
     input.match(pattern)
   end
 
   def twitter?(input)
+    return if input.nil?
     pattern = /^@?(\w){1,15}$/
     input.match(pattern)
   end
