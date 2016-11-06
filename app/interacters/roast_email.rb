@@ -35,7 +35,6 @@ class RoastEmail
 
     # byebug
 
-    scrape_linked_in
 
     if @full_contact
       myspace
@@ -85,14 +84,14 @@ class RoastEmail
   end
 
   def low_twitter_followers
-    if @full_contact['social_profiles']['twitter'] && @full_contact['social_profiles']['twitter'][0]['followers'] < 200
+    if @full_contact['social_profiles']['twitter'] && @full_contact['social_profiles']['twitter'][0]['followers'] && @full_contact['social_profiles']['twitter'][0]['followers'] < 200
       twitter_followers = @full_contact['social_profiles']['twitter'][0]['followers']
       @level1_hash['low_twiiter_followers'] = "You only have #{twitter_followers} twitter followers. No one follows you.  You suck"
     end
   end
 
   def bad_twitter_ratio
-    return if  @full_contact['social_profiles']['twitter'].nil?
+    return if  @full_contact['social_profiles']['twitter'].nil? || @full_contact['social_profiles']['twitter'][0]['followers'].nil?
     followers = @full_contact['social_profiles']['twitter'][0]['followers']
     following = @full_contact['social_profiles']['twitter'][0]['following']
 
@@ -171,17 +170,17 @@ class RoastEmail
     end
   end
 
-  def scrape_linked_in
-    url = 'https://www.linkedin.com/in/lauren-achtem-a085a6105'
+  def scrape_linked_in(url)
     agent ||= Mechanize.new
     agent.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36'
-    agent.set_proxy("47.90.9.74:80","http")
-    byebug
     page = agent.get(url)
 
     doc = Nokogiri::HTML(page.parser.to_s.force_encoding("UTF-8"))
     @linked_in_title = doc.css(".item-title")[0].text
     @linked_in_company = doc.css(".item-subtitle")[0].text
+  rescue Mechanize::ResponseCodeError
+    puts 'CODE 999 linked in scrape failed'
+    return false
   end
 
 
@@ -189,9 +188,8 @@ class RoastEmail
     linked_in = @full_contact['social_profiles']['linkedin']
     full_contact_org = @full_contact['organizations'].nil? ? nil : @full_contact['organizations'][0]
 
-    if linked_in
-      scrape_linked_in
-      position = linked_in_title
+    if linked_in && scrape_linked_in(linked_in[0]['url'])
+      position = @linked_in_title
     elsif full_contact_org
       position = @full_contact['organizations'][0]['title']
     else
@@ -200,7 +198,7 @@ class RoastEmail
 
     titles = [
       { pattern: /\bdeveloper|\bDeveloper|\bdev/, joke:"HAHA you're a #{position} -- Arn't all devs socially akward... and you know.. ugly"},
-      { pattern: /\bdesigner|\bDesigner|\bdev/, joke:"HAHA you're a #{position} -- Arn't all designers socially akward... and you know.. ugly"},
+      { pattern: /\bdesigner|\bDesigner|\bDesign/, joke:"HAHA you're a #{position} -- Arn't all designers... you know.. brainless"},
       { pattern: /\bcomedian|\bComedian|\bdev/, joke:"HAHA you're a #{position} -- Arn't all comedians socially akward... and you know.. ugly"}
     ]
 
