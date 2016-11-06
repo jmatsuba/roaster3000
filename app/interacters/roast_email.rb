@@ -242,7 +242,8 @@ class RoastEmail
   end
 
   def urban_dictionary_def
-    response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=fuck",
+    term_to_define = @full_contact['contact_info']['given_name']
+    response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=#{term_to_define}",
       headers:{
         "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
         "Accept" => "text/plain"
