@@ -72,7 +72,7 @@ class RoastEmail
   def build_json
     status = @full_contact.nil? ? "We can't find info you on, jerk" : "Ok check these out"
     {name: @name,
-      status: status,
+      status_message: status,
       generic_info: @generic_info_hash,
       level1: @level1_hash,
       level2: @level2_hash,
