@@ -105,19 +105,19 @@ class RoastEmail
   # GENERIC INFO
 
   def full_name
-    if @full_contact['contact_info']['full_name']
+    if @full_contact['contact_info']&&@full_contact['contact_info']['full_name']
       @generic_info_hash['full_name'] = @full_contact['contact_info']['full_name']
     end
   end
 
   def given_name
-    if @full_contact['contact_info']['given_name']
+    if @full_contact['contact_info']&&@full_contact['contact_info']['given_name']
       @generic_info_hash['given_name'] = @full_contact['contact_info']['given_name']
     end
   end
 
   def family_name
-    if @full_contact['contact_info']['family_name']
+    if @full_contact['contact_info']&&@full_contact['contact_info']['family_name']
       @generic_info_hash['family_name'] = @full_contact['contact_info']['family_name']
     end
   end
@@ -218,7 +218,7 @@ class RoastEmail
   end
 
   def has_website
-    website_url = @full_contact['contact_info']['website']
+    website_url = @full_contact['contact_info']['website'] if @full_contact['contact_info']
     if website_url
       @level2_hash['website'] = "Why does your website (#{website_url}) redirect to pornhub.com/husky-bitches?"
     end
@@ -357,7 +357,7 @@ class RoastEmail
   end
 
   def urban_dictionary_def
-    term_to_define = @full_contact['contact_info']['given_name']
+    term_to_define = @full_contact['contact_info']['given_name'] if @full_contact['contact_info']
     response = Unirest.get "https://mashape-community-urban-dictionary.p.mashape.com/define?term=#{term_to_define}",
       headers:{
         "X-Mashape-Key" => "aIQI5BkKWImshommfVzlfhgfe3Mjp1zlK6HjsngXw2SrocsgPh",
